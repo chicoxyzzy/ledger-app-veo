@@ -16,36 +16,53 @@
 #*******************************************************************************
 
 ifeq ($(BOLOS_SDK),)
-$(error BOLOS_SDK is not set)
+$(error Environment variable BOLOS_SDK is not set)
 endif
 include $(BOLOS_SDK)/Makefile.defines
 
-# Main app configuration
-
-APPNAME = "Amoveo"
+#APPVERSION_M=1
+#APPVERSION_N=1
+#APPVERSION_P=9
+#APPVERSION=$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)
 APPVERSION = 1.0.0
 APP_LOAD_PARAMS = --appFlags 0x00 $(COMMON_LOAD_PARAMS)
-
-# Build configuration
-
-APP_SOURCE_PATH += src
-SDK_SOURCE_PATH += lib_stusb lib_stusb_impl lib_u2f
-
-DEFINES += APPVERSION=\"$(APPVERSION)\"
-
-DEFINES += OS_IO_SEPROXYHAL IO_SEPROXYHAL_BUFFER_SIZE_B=128
-DEFINES += HAVE_BAGL HAVE_PRINTF HAVE_SPRINTF PRINTF=screen_printf
-#DEFINES += PRINTF\(...\)=
-
-DEFINES += CX_COMPLIANCE_141
-
-DEFINES += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64 HAVE_USB_APDU
-DEFINES += U2F_PROXY_MAGIC=\"fUTaRcHy\"
-DEFINES += HAVE_IO_U2F HAVE_U2F
+APPNAME = "Amoveo"
 
 ICONNAME=nanos_app_icon.gif
 
-# Compiler, assembler, and linker
+################
+# Default rule #
+################
+all: default
+
+############
+# Platform #
+############
+
+DEFINES += OS_IO_SEPROXYHAL IO_SEPROXYHAL_BUFFER_SIZE_B=128
+DEFINES += HAVE_BAGL HAVE_SPRINTF
+#DEFINES += HAVE_PRINTF PRINTF=screen_printf
+DEFINES += PRINTF\(...\)=
+DEFINES += HAVE_IO_USB HAVE_L4_USBLIB IO_USB_MAX_ENDPOINTS=7 IO_HID_EP_LENGTH=64 HAVE_USB_APDU
+#DEFINES += LEDGER_MAJOR_VERSION=$(APPVERSION_M) LEDGER_MINOR_VERSION=$(APPVERSION_N) LEDGER_PATCH_VERSION=$(APPVERSION_P)
+
+# U2F
+DEFINES += HAVE_U2F HAVE_IO_U2F
+DEFINES += U2F_PROXY_MAGIC=\"fUTaRcHy\"
+#DEFINES += USB_SEGMENT_SIZE=64
+#DEFINES += BLE_SEGMENT_SIZE=32 #max MTU, min 20
+
+#WEBUSB_URL  = www.ledgerwallet.com
+#DEFINES    += HAVE_WEBUSB WEBUSB_URL_SIZE_B=$(shell echo -n $(WEBUSB_URL) | wc -c) WEBUSB_URL=$(shell echo -n $(WEBUSB_URL) | sed -e "s/./\\\'\0\\\',/g")
+
+#DEFINES   += UNUSED\(x\)=\(void\)x
+DEFINES += APPVERSION=\"$(APPVERSION)\"
+
+DEFINES += CX_COMPLIANCE_141
+
+##############
+#  Compiler  #
+##############
 
 ifneq ($(BOLOS_ENV),)
 $(info BOLOS_ENV=$(BOLOS_ENV))
@@ -62,20 +79,22 @@ $(info GCCPATH is not set: arm-none-eabi-* will be used from PATH)
 endif
 
 CC := $(CLANGPATH)clang
+
+#CFLAGS += -O0
 CFLAGS += -O3 -Os
 
 AS := $(GCCPATH)arm-none-eabi-gcc
-AFLAGS +=
 
 LD := $(GCCPATH)arm-none-eabi-gcc
 LDFLAGS += -O3 -Os
 LDLIBS += -lm -lgcc -lc
 
+# import rules to compile glyphs(/pone)
 include $(BOLOS_SDK)/Makefile.glyphs
 
-# Main rules
-
-all: default
+### variables processed by the common makefile.rules of the SDK to grab source files and include dirs
+APP_SOURCE_PATH  += src
+SDK_SOURCE_PATH  += lib_stusb lib_stusb_impl lib_u2f
 
 load: all
 	python -m ledgerblue.loadApp $(APP_LOAD_PARAMS)
@@ -84,5 +103,4 @@ delete:
 	python -m ledgerblue.deleteApp $(COMMON_DELETE_PARAMS)
 
 # Import generic rules from the SDK
-
 include $(BOLOS_SDK)/Makefile.rules
