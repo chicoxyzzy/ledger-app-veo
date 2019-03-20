@@ -10,7 +10,7 @@ typedef unsigned int uint;
 char curr_tx_desc[MAX_TX_TEXT_LINES][MAX_TX_TEXT_WIDTH];
 unsigned char raw_tx[MAX_TX_RAW_LENGTH];
 
-static const char *tx_types[] = {"create_acc_tx", "spend"};
+static const char *tx_types[] = {"create_acc_tx", "spend", "oracle_new", "oracle_bet", "oracle_close", "unmatched", "oracle_winnings"};
 static const char not_supported[] = "tx type not supported";
 
 void format_veo(const uint, char*, unsigned char);
@@ -41,39 +41,77 @@ static void parse_tx_data(char dst[][92], unsigned char fields,
   }
 }
 
+static int contains(char **arr, const char *target) {
+  int i = 0;
+  int arr_len = ARRAYLEN(arr[0]);
+  int target_len = strlen(target);
+  for(i = 0; i < arr_len; i++) {
+    if(os_memcmp(arr[i], target, target_len) == 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 void prepare_text_description(void) {
   char data[6][92];
-  parse_tx_data(data, 6, raw_tx);
+  parse_tx_data(data, 10, raw_tx);
 
-  char txinfo[30];
-  char address[50];
-  char info[50];
+  // TODO insure length is enough for all cases
+  char page1[30];
+  char page2[50];
+  char page3[50];
 
+//  if (contains(tx_types, data[0]) == 1) {
   const unsigned char len = strlen(data[0]);
   if ( (os_memcmp(data[0], tx_types[0], len) == 0) ||
        (os_memcmp(data[0], tx_types[1], len) == 0) ) {
-
     char amount[20];
     format_veo(atoi(data[5]), amount, 20);
 
     char fee[20];
     format_veo(atoi(data[3]), fee, 20);
 
-    snprintf(txinfo, 30, "%s VEO", amount);
+    snprintf(page1, 30, "%s VEO", amount);
     data[4][21] = '\0';
-    snprintf(address, 50, "%s...%s", data[4], data[4] + 68);
+    snprintf(page2, 50, "%s...%s", data[4], data[4] + 68);
 
-    snprintf(info, 50, "%s VEO for %s", fee, data[0]);
-
+    snprintf(page3, 50, "%s VEO for %s", fee, data[0]);
+  } else if ( (os_memcmp(data[0], tx_types[2], len) == 0) ) {
+    // TODO oracle_new
+  } else if ( (os_memcmp(data[0], tx_types[3], len) == 0) ) {
+    // id
+    char oracle_id[20];
+    format_veo(atoi(data[1]), oracle_id, 20);
+    snprintf(page1, 30, "%s", oracle_id);
+    // type
+    snprintf(page2, 30, "%d", data[5]);
+    // fee
+    char fee[20];
+    format_veo(atoi(data[3]), fee, 20);
+    snprintf(page3, 50, "%s VEO for %s", fee, data[0]);
+  } else if ( (os_memcmp(data[0], tx_types[4], len) == 0) ||
+              (os_memcmp(data[0], tx_types[5], len) == 0) ||
+              (os_memcmp(data[0], tx_types[6], len) == 0) ) {
+    // id
+    char oracle_id[20];
+    format_veo(atoi(data[1]), oracle_id, 20);
+    snprintf(page1, 30, "%s", oracle_id);
+    // fee
+    char fee[20];
+    format_veo(atoi(data[3]), fee, 20);
+    snprintf(page2, 50, "%s VEO for %s", fee, data[0]);
   } else {
-    os_memmove(txinfo, not_supported, strlen(not_supported));
-    os_memmove(address, not_supported, strlen(not_supported));
-    os_memmove(info, not_supported, strlen(not_supported));
+    os_memmove(page1, not_supported, strlen(not_supported));
+    os_memmove(page2, not_supported, strlen(not_supported));
+    os_memmove(page3, not_supported, strlen(not_supported));
   }
 
-  os_memmove(curr_tx_desc[0], address, 50);
-  os_memmove(curr_tx_desc[1], txinfo, 30);
-  os_memmove(curr_tx_desc[2], info, 50);
+  os_memmove(curr_tx_desc[0], page1, 30);
+  os_memmove(curr_tx_desc[1], page2, 50);
+  if (strlen(page3) != 0) {
+    os_memmove(curr_tx_desc[2], page3, 50);
+  }
 }
 
 
