@@ -5,7 +5,7 @@
 extern
 unsigned int const C_icon_back_colors[]
 ;
-extern
+extern	
 unsigned char const C_icon_back_bitmap[];
 #ifdef OS_IO_SEPROXYHAL
 #include "os_io_seproxyhal.h"
@@ -20,7 +20,7 @@ const bagl_icon_details_t C_icon_back;
 extern
 unsigned int const C_icon_dashboard_colors[]
 ;
-extern
+extern	
 unsigned char const C_icon_dashboard_bitmap[];
 #ifdef OS_IO_SEPROXYHAL
 #include "os_io_seproxyhal.h"
@@ -35,7 +35,7 @@ const bagl_icon_details_t C_icon_dashboard;
 extern
 unsigned int const C_nanos_veo_badge_colors[]
 ;
-extern
+extern	
 unsigned char const C_nanos_veo_badge_bitmap[];
 #ifdef OS_IO_SEPROXYHAL
 #include "os_io_seproxyhal.h"
