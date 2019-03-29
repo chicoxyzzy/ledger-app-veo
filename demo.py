@@ -62,7 +62,7 @@ _textToSign_winnings = '["oracle_winnings","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xf
 _textToSign_unmatched = '["unmatched","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",20,152118,"M16iB5Sd0BfXnFII3axzmbB924zBTgG3qDvwogYgyV4="]'
 
 # CHANGE TO NEEDED TX
-textToSign = _textToSign_winnings
+textToSign = _textToSign_close
 
 print ("\nPublic key: %s, length: %d\n" % (base64.b64encode(publicKey), len(publicKey)))
 
