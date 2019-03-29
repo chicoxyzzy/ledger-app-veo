@@ -34,15 +34,35 @@ keys = dongle.exchange(codecs.decode("80010000FF"+ bipp44_path, 'hex'))
 publicKey = keys[:65]
 privateKey = keys[65:]
 
-_textToSign = '["create_acc_tx","BNKQhfy4bRm3We9E+DXS7dhWp2avHSN2sIDuOlpJjWwl8Lo1FdKfNhk63yTFlXe685URVRDfbXPY16HlXDqYagg=",9,151168,"BFRPiXyi8DRZ/6u+MRFMQHUY339lVPHrkuF0u5ReA1fmFirF5d7+aioFOJQOcPTPJ3rpogolInseoudaOKIwgC8=",10000000]'
+# create acc
+_textToSign_create_acc = '["create_acc_tx","BNKQhfy4bRm3We9E+DXS7dhWp2avHSN2sIDuOlpJjWwl8Lo1FdKfNhk63yTFlXe685URVRDfbXPY16HlXDqYagg=",9,151168,"BFRPiXyi8DRZ/6u+MRFMQHUY339lVPHrkuF0u5ReA1fmFirF5d7+aioFOJQOcPTPJ3rpogolInseoudaOKIwgC8=",10000000]'
 
-_textToSign = '["spend","BB3G8DfYtkZurxIxAGw2Y8ELhVx8WyjjqAdoVptOB+tW5cQsj93XGflHJBrFKpgEFWTUKKYKDM8GYPu4eUM+DCg=",4,60707,"BNKQhfy4bRm3We9E+DXS7dhWp2avHSN2sIDuOlpJjWwl8Lo1FdKfNhk63yTFlXe685URVRDfbXPY16HlXDqYagg=",900000,0]'
+# spend 1
+_textToSign_spend1 = '["spend","BB3G8DfYtkZurxIxAGw2Y8ELhVx8WyjjqAdoVptOB+tW5cQsj93XGflHJBrFKpgEFWTUKKYKDM8GYPu4eUM+DCg=",4,60707,"BNKQhfy4bRm3We9E+DXS7dhWp2avHSN2sIDuOlpJjWwl8Lo1FdKfNhk63yTFlXe685URVRDfbXPY16HlXDqYagg=",900000,0]'
 
-_textToSign = '["spend","BB3G8DfYtkZurxIxAGw2Y8ELhVx8WyjjqAdoVptOB+tW5cQsj93XGflHJBrFKpgEFWTUKKYKDM8GYPu4eUM+DCg=",36,61657,"BHVfQWRx7I1xmlWw5KJ7l9ijq4tcobFCub68jsmCGaEQXSr/hi0Vpz8+wa0v8ytcTEUu4wJwTfC+7q6r+CPYS20=",10000000,0]'
+# spend 2
+_textToSign_spend2 = '["spend","BB3G8DfYtkZurxIxAGw2Y8ELhVx8WyjjqAdoVptOB+tW5cQsj93XGflHJBrFKpgEFWTUKKYKDM8GYPu4eUM+DCg=",36,61657,"BHVfQWRx7I1xmlWw5KJ7l9ijq4tcobFCub68jsmCGaEQXSr/hi0Vpz8+wa0v8ytcTEUu4wJwTfC+7q6r+CPYS20=",10000000,0]'
 
+# oracle bet
+_textToSign_bet = '["oracle_bet","BGJJ08FDDFCQ8w3G3AbrL/qjEQJXWZsLqIqrmyoH3Vhy709+UlkJLgA2KarZTfXQg5E46jd918Nl9AkexDUKNzI=",1137,152118,"OaQb/xyYNbqrT4p/P8i7wfvo7zWo7GkCUBFfI8RuRNE=",2,100000000]'
 
+# oracle close
+_textToSign_close = '["oracle_close","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",12,152118,"POjbPIzIGg/7QHHdecpTnPZyGd0VGrbHSlZwA0EueMI="]'
 
-textToSign = _textToSign
+# governance oracle
+_textToSign_gov_oracle = '["oracle_new","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",31,152118,"",0,"zItT81PP8MYrk+QDce2eUid8SQSsMzZKhWBy2Wb2WGY=",0,3,50]'
+
+# question oracle
+_textToSign_question_oracle = '["oracle_new","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",38,152118,"UT12ZW8gaXMgd29ydGggbW9yZSB0aGFuICQxMDA7UD1vcmFjbGUgekl0VDgxUFA4TVlyaytRRGNlMmVVaWQ4U1FTc016WktoV0J5MldiMldHWT0gcmV0dXJucyB0cnVlOyAoUCBhbmQgUSkgb3IgKCFQIGFuZCAhUSku",39670,"koWAM1ANpoPGmd+o3AFVABVyc7EeEHanf8qqmxOLeE4=",0,0,0]'
+
+# collect oracle winnings
+_textToSign_winnings = '["oracle_winnings","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",22,152118,"tgGxIve5FdNsAB0t4diP5p3cJjeax05KpWX7ltfJjyI="]'
+
+# collect unmatched orders
+_textToSign_unmatched = '["unmatched","BF3rw/kC3c5UJ6Lfr/uKxGgDT4mbIHZmf+xffJldnqL0Hf8ilrI6OGdG+TAjJKL3rZPvDuqFUd6tg02CKnRGrr8=",20,152118,"M16iB5Sd0BfXnFII3axzmbB924zBTgG3qDvwogYgyV4="]'
+
+# CHANGE TO NEEDED TX
+textToSign = _textToSign_winnings
 
 print ("\nPublic key: %s, length: %d\n" % (base64.b64encode(publicKey), len(publicKey)))
 
